@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cost report</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#f3f4f2;color:#15181c;font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:14px;line-height:20px}
+a{color:#2140c4;text-decoration:none}a:hover{color:#1a33a0;text-decoration:underline}
+button,select{font-family:inherit}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.nav-a{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:4px;color:#15181c;font-size:14px}
+.nav-a:hover{background:#eceeeb;color:#15181c;text-decoration:none}
+.nav-on{background:#e5e9fb;color:#2140c4;font-weight:500}
+.cap{font-size:12px;line-height:16px;font-weight:500;color:#555d66}
+.tr{display:grid;grid-template-columns:minmax(240px,2.4fr) 120px 84px 84px 84px 72px;gap:16px;padding:11px 20px;border-bottom:1px solid #dfe2de;align-items:center}
+.num{text-align:right}
+:focus-visible{outline:2px solid #2140c4;outline-offset:2px}
+</style>
+</helmet>
+<div style="display: flex; flex-wrap: wrap; min-height: 900px; background: #f3f4f2;">
+  <nav aria-label="Main" style="flex: 1 1 208px; max-width: 208px; box-sizing: border-box; background: #ffffff; border-right: 1px solid #dfe2de; display: flex; flex-direction: column; gap: 4px; padding: 16px 12px;">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 4px 10px 18px;"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="3" fill="#15181c"></rect><path d="M5.5 7h9M5.5 10h9M5.5 13h5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path><circle cx="14.5" cy="13" r="1.8" fill="#a3b4ff"></circle></svg><span style="font-weight: 600;">Talent Search</span></div>
+    <a class="nav-a" href="P1-Home.dc.html"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"></circle><path d="M10.5 10.5 14 14"></path></svg>Search</a>
+    <a class="nav-a" href="#"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"></circle><path d="M8 4.5V8l2.5 1.5"></path></svg>History</a>
+    <a class="nav-a nav-on" href="P6-Cost.dc.html" aria-current="page"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3.5" width="12" height="9" rx="1"></rect><path d="M2 6.5h12M5 10h2"></path></svg>Cost report</a>
+    <div style="margin-top: auto; border-top: 1px solid #dfe2de; padding: 14px 10px 4px; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 12px; line-height: 16px; color: #555d66;">Spent this month</span><span class="mono" style="font-size: 16px; line-height: 22px; font-weight: 500;">$19.04</span><span style="font-size: 12px; line-height: 16px; color: #555d66;">32 searches</span></div>
+  </nav>
+
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 28px;">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <h1 style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600;">Cost report</h1>
+        <span style="font-size: 13px; line-height: 18px; color: #555d66;">Spend on searches. GitHub and paper indexes are free; you pay for web search, page fetches and AI verification.</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;"><label for="m" style="font-size: 13px; color: #555d66;">Month</label><select id="m" style="height: 32px; padding: 0 8px; border: 1px solid #848b88; border-radius: 4px; background: #ffffff; font-size: 13px;"><option>October 2026</option><option>September 2026</option></select></div>
+    </header>
+
+    <section aria-label="Totals" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #ffffff; border: 1px solid #dfe2de; border-radius: 4px;">
+      <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #dfe2de;"><span style="font-size: 13px; color: #555d66;">Spent this month</span><span class="mono" style="font-size: 24px; line-height: 28px; font-weight: 500;">$19.04</span><span style="font-size: 12px; line-height: 16px; color: #555d66;">$13.80 in September</span></div>
+      <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #dfe2de;"><span style="font-size: 13px; color: #555d66;">Searches</span><span class="mono" style="font-size: 24px; line-height: 28px; font-weight: 500;">32</span><span style="font-size: 12px; line-height: 16px; color: #555d66;">2 stopped at budget limit</span></div>
+      <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid #dfe2de;"><span style="font-size: 13px; color: #555d66;">Average per search</span><span class="mono" style="font-size: 24px; line-height: 28px; font-weight: 500;">$0.60</span><span style="font-size: 12px; line-height: 16px; color: #555d66;">median $0.54</span></div>
+      <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 13px; color: #555d66;">Per verified candidate</span><span class="mono" style="font-size: 24px; line-height: 28px; font-weight: 500;">$0.024</span><span style="font-size: 12px; line-height: 16px; color: #555d66;">794 verified</span></div>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start;">
+      <section style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+        <h2 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Searches</h2>
+        <div style="background: #ffffff; border: 1px solid #dfe2de; border-radius: 4px; overflow-x: auto;">
+          <div role="table" aria-label="Searches this month" style="min-width: 720px;">
+            <div class="tr" role="row" style="background: #eceeeb; padding-top: 8px; padding-bottom: 8px;"><span class="cap" role="columnheader">Request</span><span class="cap" role="columnheader">When</span><span class="cap num" role="columnheader">People</span><span class="cap num" role="columnheader">Verified</span><span class="cap num" role="columnheader">Cost</span><span class="cap num" role="columnheader">Time</span></div>
+            <sc-for list="{{runs}}" as="r" hint-placeholder-count="8">
+              <div class="tr" role="row">
+                <span role="cell" style="display: flex; flex-direction: column; min-width: 0;"><a href="P4-Complete.dc.html" style="color: #15181c; font-weight: 500;">{{r.q}}</a><span style="font-size: 12px; line-height: 16px; color: {{r.nc}};">{{r.note}}</span></span>
+                <span role="cell" class="mono" style="font-size: 12px; color: #555d66;">{{r.when}}</span>
+                <span role="cell" class="mono num">{{r.people}}</span>
+                <span role="cell" class="mono num">{{r.ver}}</span>
+                <span role="cell" class="mono num" style="font-weight: 500;">{{r.cost}}</span>
+                <span role="cell" class="mono num" style="color: #555d66;">{{r.time}}</span>
+              </div>
+            </sc-for>
+            <div style="padding: 10px 20px; font-size: 13px; color: #555d66;">Showing 8 of 32 · <a href="#">Show all</a></div>
+          </div>
+        </div>
+      </section>
+
+      <section style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
+        <h2 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 600;">By source</h2>
+        <div style="background: #ffffff; border: 1px solid #dfe2de; border-radius: 4px; padding: 6px 18px;">
+          <sc-for list="{{src}}" as="s" hint-placeholder-count="5">
+            <div style="display: flex; flex-direction: column; gap: 6px; padding: 12px 0; border-bottom: 1px solid #dfe2de;">
+              <div style="display: flex; justify-content: space-between; gap: 8px;"><span>{{s.name}}</span><span class="mono" style="font-weight: 500;">{{s.cost}}</span></div>
+              <span style="display: block; height: 6px; background: #eceeeb;"><span style="display: block; height: 6px; width: {{s.w}}; background: #2a47c2;"></span></span>
+              <span style="font-size: 12px; line-height: 16px; color: #555d66;">{{s.note}}</span>
+            </div>
+          </sc-for>
+          <div style="display: flex; justify-content: space-between; padding: 12px 0;"><span style="font-weight: 600;">Total</span><span class="mono" style="font-weight: 500;">$19.04</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const r = (q, when, people, ver, cost, time, note, warn) => ({ q, when, people, ver, cost, time, note: note || '', nc: warn ? '#865000' : '#555d66' });
+    return {
+      runs: [
+        r('LLM inference optimization engineers in the US', 'Oct 26 10:40', 54, 34, '$0.62', '2:04'),
+        r('PhD researchers in computer vision, California', 'Oct 25 16:12', 61, 39, '$0.71', '2:31'),
+        r('Engineers experienced with on-device deployment on iOS (Core ML)', 'Oct 24 09:05', 22, 13, '$1.00', '1:58', 'Stopped at $1.00 limit', true),
+        r('Full-stack engineers contributing to open-source agent frameworks', 'Oct 23 14:47', 48, 30, '$0.55', '1:49'),
+        r('Speech recognition applied scientists, remote US', 'Oct 22 11:20', 37, 21, '$0.49', '1:37'),
+        r('Robotics perception engineers in Boston', 'Oct 21 15:03', 0, 0, '$0.08', '0:22', 'No results · conditions too narrow'),
+        r('Expand to Canada: LLM inference engineers', 'Oct 20 10:31', 29, 17, '$0.41', '1:22'),
+        r('Data infrastructure engineers with Rust, New York', 'Oct 19 17:44', 40, 26, '$0.58', '1:51')
+      ],
+      src: [
+        { name: 'GitHub', cost: '$0.00', w: '0%', note: 'Free · 1,410 queries' },
+        { name: 'Papers', cost: '$0.00', w: '0%', note: 'Free · 512 queries' },
+        { name: 'Web search', cost: '$5.61', w: '54%', note: '374 queries · $0.015 each' },
+        { name: 'Homepage fetches', cost: '$3.12', w: '30%', note: '1,040 pages' },
+        { name: 'AI verification', cost: '$10.31', w: '100%', note: 'Parsing plans, reading sources, scoring' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

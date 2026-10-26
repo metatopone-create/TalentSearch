@@ -1,0 +1,43 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-26T10:00:00Z"},
+  "title": "Talent Search MVP",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1320, "title": "1 · Design tokens"},
+    "Components.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1500, "title": "3 · Key components and states"},
+    "P1-Home.dc.html": {"x": 0, "y": 1920, "w": 1440, "h": 900, "title": "P1 · Search home", "expand": "fill", "is_interactive": true},
+    "P2-Plan.dc.html": {"x": 1520, "y": 1920, "w": 1440, "h": 900, "title": "P2 · Plan review", "expand": "fill", "is_interactive": true},
+    "P3a-Started.dc.html": {"x": 3040, "y": 1920, "w": 1440, "h": 900, "title": "P3 · Searching — just started", "expand": "fill"},
+    "P3b-Progress.dc.html": {"x": 4560, "y": 1920, "w": 1440, "h": 900, "title": "P3 · Searching — in progress", "expand": "fill"},
+    "P3c-Nearly.dc.html": {"x": 6080, "y": 1920, "w": 1440, "h": 900, "title": "P3 · Searching — nearly done", "expand": "fill"},
+    "P4-Complete.dc.html": {"x": 0, "y": 3240, "w": 1440, "h": 1160, "title": "P4 · Search complete", "expand": "fill"},
+    "P5a-Drawer.dc.html": {"x": 1520, "y": 3240, "w": 1440, "h": 900, "title": "P5 · Candidate drawer", "expand": "fill"},
+    "P5b-Gathering.dc.html": {"x": 3040, "y": 3240, "w": 1440, "h": 900, "title": "P5 · Drawer — gathering details", "expand": "fill"},
+    "P6-Cost.dc.html": {"x": 4560, "y": 3240, "w": 1440, "h": 900, "title": "P6 · Cost report", "expand": "fill"},
+    "P7-States.dc.html": {"x": 6080, "y": 3240, "w": 1440, "h": 1040, "title": "P7 · Empty and error states"}
+  },
+  "order": [
+    "Main.dc.html",
+    "Components.dc.html",
+    "P1-Home.dc.html",
+    "P2-Plan.dc.html",
+    "P3a-Started.dc.html",
+    "P3b-Progress.dc.html",
+    "P3c-Nearly.dc.html",
+    "P4-Complete.dc.html",
+    "P5a-Drawer.dc.html",
+    "P5b-Gathering.dc.html",
+    "P6-Cost.dc.html",
+    "P7-States.dc.html"
+  ],
+  "notes": {
+    "foundations": {"x": 0, "y": -300, "text": "Foundations · tokens and components", "kind": "title1", "maxW": 2960},
+    "flow": {"x": 0, "y": 1620, "text": "Search flow · P1 home → P2 plan → P3 searching", "kind": "title1", "maxW": 7520},
+    "results": {"x": 0, "y": 2940, "text": "Results, detail, cost and edge states · P4–P7", "kind": "title1", "maxW": 7520}
+  },
+  "designSystems": [
+    {"title": "Talent Search", "namespace": "talent-search", "artifact": "https://claude.ai/artifact/97MKTiSiTfEbH8jY9MaWq8", "version": "1790222103-b4c6", "copiedAt": "2026-10-26T10:00:00Z"}
+  ]
+}

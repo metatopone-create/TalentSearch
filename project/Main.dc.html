@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Talent Search · Design tokens</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#f3f4f2;color:#15181c;font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:14px;line-height:20px}
+a{color:#2140c4}a:hover{color:#1a33a0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.si{width:14px;height:14px;flex:none}
+.badge{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:2px;font-size:12px;font-weight:500;line-height:16px;white-space:nowrap}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1320px; box-sizing: border-box; padding: 48px 56px; display: flex; flex-direction: column; gap: 40px; background: #f3f4f2;">
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; border-bottom: 1px solid #dfe2de; padding-bottom: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <h1 style="margin: 0; font-size: 30px; line-height: 38px; font-weight: 600; letter-spacing: -0.01em;">Talent Search design tokens</h1>
+      <p style="margin: 0; color: #555d66; max-width: 760px;">A research file you can audit. One accent (cobalt) for action and evidence links, one signature surface (trace) for the live search, and status told by shape and word, never by color alone.</p>
+    </div>
+    <span class="mono" style="font-size: 12px; color: #555d66;">v1 · light theme shown · dark values listed</span>
+  </div>
+
+  <section style="display: flex; flex-direction: column; gap: 16px;">
+    <h2 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Core colors</h2>
+    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px;">
+      <sc-for list="{{core}}" as="c" hint-placeholder-count="6">
+        <div style="display: flex; flex-direction: column; background: #ffffff; border: 1px solid #dfe2de; border-radius: 4px; overflow: hidden;">
+          <div style="height: 88px; background: {{c.hex}}; border-bottom: 1px solid #dfe2de;"></div>
+          <div style="padding: 12px; display: flex; flex-direction: column; gap: 4px;">
+            <span class="mono" style="font-size: 13px; font-weight: 500;">{{c.name}}</span>
+            <span class="mono" style="font-size: 12px; color: #555d66;">{{c.hex}} · dark {{c.dark}}</span>
+            <span style="font-size: 13px; line-height: 18px; color: #555d66;">{{c.use}}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px;">
+    <section style="display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Status styles</h2>
+      <p style="margin: 0; color: #555d66; font-size: 13px; line-height: 18px;">Each status has its own glyph shape and word. Verified and Not enough evidence differ in shape (filled check vs. ring with minus) and in lightness, not hue alone.</p>
+      <div style="display: flex; flex-direction: column; border-top: 1px solid #dfe2de;">
+        <div style="display: grid; grid-template-columns: 170px 1fr 150px; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid #dfe2de;">
+          <span class="badge" style="background: #e2f1ea; color: #0e6a4a; justify-self: start;"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="currentColor"></circle><path d="M5.2 8.3l1.9 1.9 3.7-4" fill="none" stroke="#e2f1ea" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>Verified</span>
+          <span style="font-size: 13px; line-height: 18px;">At least two independent sources agree on role, skill and location.</span>
+          <span class="mono" style="font-size: 12px; color: #555d66;">#0E6A4A on #E2F1EA</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px 1fr 150px; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid #dfe2de;">
+          <span class="badge" style="background: #faeed8; color: #865000; justify-self: start;"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M8 2.2a5.8 5.8 0 0 1 0 11.6z" fill="currentColor"></path></svg>Lead only</span>
+          <span style="font-size: 13px; line-height: 18px;">Promising, but one source or an outdated one. Worth a look, not yet a claim.</span>
+          <span class="mono" style="font-size: 12px; color: #555d66;">#865000 on #FAEED8</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px 1fr 150px; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid #dfe2de;">
+          <span class="badge" style="background: #eceeeb; color: #555d66; justify-self: start;"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.6 2.1"></circle></svg>Pending</span>
+          <span style="font-size: 13px; line-height: 18px;">Found, not yet checked. Neutral on purpose: pending is not a judgement.</span>
+          <span class="mono" style="font-size: 12px; color: #555d66;">#555D66 on #ECEEEB</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px 1fr 150px; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid #dfe2de;">
+          <span class="badge" style="background: #f8e5df; color: #a3361a; justify-self: start;"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M5.3 8h5.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>Not enough evidence</span>
+          <span style="font-size: 13px; line-height: 18px;">Excluded because sources were missing or contradicted each other. Also used for a failed source.</span>
+          <span class="mono" style="font-size: 12px; color: #555d66;">#A3361A on #F8E5DF</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 170px 1fr 150px; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid #dfe2de;">
+          <span class="badge" style="background: #eceeeb; color: #555d66; justify-self: start;"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M6 6l4 4M10 6l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>Didn't match</span>
+          <span style="font-size: 13px; line-height: 18px;">Evidence was clear and showed the person misses a Must condition.</span>
+          <span class="mono" style="font-size: 12px; color: #555d66;">#555D66 on #ECEEEB</span>
+        </div>
+      </div>
+
+      <h3 style="margin: 8px 0 0; font-size: 15px; line-height: 22px; font-weight: 600;">Match score ramp</h3>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <sc-for list="{{scores}}" as="s" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 70px 32px 1fr 110px; gap: 12px; align-items: center;">
+            <span class="mono" style="font-size: 12px; color: #555d66;">{{s.name}}</span>
+            <span class="mono" style="font-size: 14px; font-weight: 500;">{{s.val}}</span>
+            <span style="height: 6px; background: #eceeeb; border-radius: 1px; display: block;"><span style="display: block; height: 6px; width: {{s.w}}; background: {{s.hex}}; border-radius: 1px;"></span></span>
+            <span class="mono" style="font-size: 12px; color: #555d66;">{{s.range}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Type</h2>
+      <p style="margin: 0; color: #555d66; font-size: 13px; line-height: 18px;">IBM Plex Sans for interface text. IBM Plex Mono, with tabular figures, for anything a person might compare or copy: queries, domains, durations, scores, costs.</p>
+      <div style="display: flex; flex-direction: column; border-top: 1px solid #dfe2de;">
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span style="font-size: 30px; line-height: 38px; font-weight: 600; letter-spacing: -0.01em;">Who are you looking for?</span><span class="mono" style="font-size: 12px; color: #555d66;">display · 30/38 · 600</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span style="font-size: 20px; line-height: 28px; font-weight: 600;">LLM inference optimization engineers</span><span class="mono" style="font-size: 12px; color: #555d66;">title · 20/28 · 600</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span style="font-size: 15px; line-height: 22px; font-weight: 600;">Why they match</span><span class="mono" style="font-size: 12px; color: #555d66;">heading · 15/22 · 600</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span>Maintains a popular inference kernel library; 2 papers on 4-bit quantization.</span><span class="mono" style="font-size: 12px; color: #555d66;">body · 14/20 · 400</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span style="font-size: 13px; line-height: 18px; color: #555d66;">Senior ML Engineer · Northwind AI</span><span class="mono" style="font-size: 12px; color: #555d66;">body-sm · 13/18 · 400</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span style="font-size: 12px; line-height: 16px; font-weight: 500;">Verified · Quantization · Match</span><span class="mono" style="font-size: 12px; color: #555d66;">label · 12/16 · 500</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span class="mono" style="font-size: 24px; line-height: 28px; font-weight: 500;">38 · $0.62</span><span class="mono" style="font-size: 12px; color: #555d66;">readout · mono 24/28</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 170px; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid #dfe2de;"><span class="mono" style="font-size: 12px; line-height: 18px;">"vllm OR tensorrt-llm" location:US · 2.1s</span><span class="mono" style="font-size: 12px; color: #555d66;">code · mono 12/18</span></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin-top: 8px;">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <h3 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Spacing · 4px grid</h3>
+          <sc-for list="{{spaces}}" as="sp" hint-placeholder-count="7">
+            <div style="display: grid; grid-template-columns: 72px 1fr; gap: 12px; align-items: center;">
+              <span class="mono" style="font-size: 12px; color: #555d66;">{{sp.name}}</span>
+              <span style="display: flex; align-items: center; gap: 8px;"><span style="display: block; height: 10px; width: {{sp.v}}; background: #2140c4;"></span><span class="mono" style="font-size: 12px;">{{sp.v}}</span></span>
+            </div>
+          </sc-for>
+          <p style="margin: 4px 0 0; font-size: 13px; line-height: 18px; color: #555d66;">Cells pad 12. Page gutters 24. Rows 56–72.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <h3 style="margin: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Radius · small and few</h3>
+          <div style="display: flex; gap: 16px; align-items: flex-end;">
+            <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;"><span style="display: block; width: 56px; height: 56px; border: 1.5px solid #15181c; border-radius: 2px;"></span><span class="mono" style="font-size: 12px;">xs · 2</span></div>
+            <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;"><span style="display: block; width: 56px; height: 56px; border: 1.5px solid #15181c; border-radius: 4px;"></span><span class="mono" style="font-size: 12px;">sm · 4</span></div>
+            <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;"><span style="display: block; width: 56px; height: 56px; border: 1.5px solid #15181c; border-radius: 6px;"></span><span class="mono" style="font-size: 12px;">md · 6</span></div>
+          </div>
+          <p style="margin: 4px 0 0; font-size: 13px; line-height: 18px; color: #555d66;">xs: tags, badges, domain chips. sm: buttons, inputs, avatars. md: search box, callouts, drawer edge only.</p>
+          <p style="margin: 0; font-size: 13px; line-height: 18px; color: #555d66;">Regions split by 1px hairlines, not shadowed cards. Only the drawer and popovers float.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1320}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      core: [
+        { name: 'paper', hex: '#F3F4F2', dark: '#0F1214', use: 'App background behind nav, tables and panels.' },
+        { name: 'surface', hex: '#FFFFFF', dark: '#171B1E', use: 'Tables, plan form, drawer. The working surface.' },
+        { name: 'ink', hex: '#15181C', dark: '#E6E9EC', use: 'Primary text. ink-muted #555D66 for secondary.' },
+        { name: 'line', hex: '#DFE2DE', dark: '#2A3036', use: 'Hairlines. line-control #848B88 for control borders (3:1).' },
+        { name: 'cobalt', hex: '#2140C4', dark: '#93A8FF', use: 'The one accent: primary action, links, evidence markers, focus. Never status.' },
+        { name: 'trace', hex: '#1A1F26', dark: '#0A0C0F', use: 'Search trace column only, with trace-accent #A3B4FF for the running step.' }
+      ],
+      scores: [
+        { name: 'score-1', val: '42', w: '42%', hex: '#7182D4', range: 'below 50' },
+        { name: 'score-2', val: '58', w: '58%', hex: '#5A6FD0', range: '50–64' },
+        { name: 'score-3', val: '71', w: '71%', hex: '#4660CC', range: '65–79' },
+        { name: 'score-4', val: '84', w: '84%', hex: '#2A47C2', range: '80–89' },
+        { name: 'score-5', val: '94', w: '94%', hex: '#172A8C', range: '90 and above' }
+      ],
+      spaces: [
+        { name: 'space-1', v: '4px' }, { name: 'space-2', v: '8px' }, { name: 'space-3', v: '12px' },
+        { name: 'space-4', v: '16px' }, { name: 'space-6', v: '24px' }, { name: 'space-8', v: '32px' }, { name: 'space-12', v: '48px' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

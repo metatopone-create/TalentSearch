@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Empty and error states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#f3f4f2;color:#15181c;font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;font-size:14px;line-height:20px}
+a{color:#2140c4;text-decoration:none}a:hover{color:#1a33a0;text-decoration:underline}
+button{font-family:inherit;cursor:pointer}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.si{width:14px;height:14px;flex:none}
+.btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;box-sizing:border-box;border-radius:4px;border:1px solid #848b88;background:#fff;color:#15181c;font-size:13px;font-weight:500;line-height:18px;white-space:nowrap}
+.btn:hover{background:#eceeeb}
+.btn-p{background:#2140c4;border-color:#2140c4;color:#fff}.btn-p:hover{background:#1a33a0}
+.badge{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:2px;font-size:12px;font-weight:500;line-height:16px;white-space:nowrap}
+.bv{background:#e2f1ea;color:#0e6a4a}.bp{background:#eceeeb;color:#555d66}
+.chip{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px solid #343c46;border-radius:2px;font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:16px;color:#96a0ab;white-space:nowrap}
+.cap{font-size:12px;line-height:16px;font-weight:500;color:#555d66}
+.lab{margin:0;font-size:15px;line-height:22px;font-weight:600}
+.frame{background:#ffffff;border:1px solid #dfe2de;border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.mrow{display:grid;grid-template-columns:1fr 92px 40px;gap:10px;padding:10px 16px;border-bottom:1px solid #dfe2de;align-items:center;font-size:13px;line-height:18px}
+:focus-visible{outline:2px solid #2140c4;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1040px; box-sizing: border-box; padding: 48px 56px; display: flex; flex-direction: column; gap: 32px; background: #f3f4f2;">
+  <div style="display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #dfe2de; padding-bottom: 24px;">
+    <h1 style="margin: 0; font-size: 30px; line-height: 38px; font-weight: 600; letter-spacing: -0.01em;">Empty and error states</h1>
+    <p style="margin: 0; color: #555d66;">Each one says what happened, what was still found, and the one next step. Shown as the results area of P3/P4.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start;">
+
+    <section style="display: flex; flex-direction: column; gap: 12px;">
+      <h2 class="lab">No results</h2>
+      <div class="frame">
+        <div style="padding: 14px 16px; border-bottom: 1px solid #dfe2de; background: #f3f4f2;"><span style="font-weight: 600;">Robotics perception engineers in Boston</span><br><span style="font-size: 12px; color: #555d66;">Finished in 0:22 · $0.08</span></div>
+        <div style="padding: 32px 24px 28px; display: flex; flex-direction: column; gap: 14px;">
+          <svg viewBox="0 0 16 16" style="width: 28px; height: 28px; color: #555d66;" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.2"></circle><path d="M6 6l4 4M10 6l-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"></path></svg>
+          <h3 style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600;">No one met every Must condition</h3>
+          <p style="margin: 0; line-height: 21px;">We reviewed 23 people. 19 work on perception, but only 2 are in the Boston area, and neither has published or shipped work on LiDAR fusion.</p>
+          <div style="display: flex; flex-direction: column; border-top: 1px solid #dfe2de;">
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #dfe2de; font-size: 13px;"><span>Based in Boston, MA</span><span class="mono" style="color: #555d66;">2 of 23 met</span></div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #dfe2de; font-size: 13px;"><span>LiDAR fusion experience</span><span class="mono" style="color: #555d66;">4 of 23 met</span></div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #dfe2de; font-size: 13px;"><span>Works on perception</span><span class="mono" style="color: #555d66;">19 of 23 met</span></div>
+          </div>
+          <span style="font-size: 13px; font-weight: 500;">Try loosening one condition</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <button type="button" class="btn">Remove “Based in Boston, MA”</button>
+            <button type="button" class="btn">Make LiDAR fusion Preferred</button>
+          </div>
+          <span style="font-size: 12px; line-height: 16px; color: #555d66;">Removing the location would have kept 4 people. Re-running costs about $0.30.</span>
+        </div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px;">
+      <h2 class="lab">A source failed</h2>
+      <div class="frame">
+        <div style="background: #1a1f26; color: #dfe4ea; padding: 16px 16px 4px;">
+          <div style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px;">
+            <div style="position: relative; display: flex; justify-content: center;"><span style="position: absolute; top: 14px; bottom: 0; left: 9px; width: 1px; background: #343c46;"></span><span style="position: relative; margin-top: 5px; width: 8px; height: 8px; border-radius: 50%; background: #96a0ab;"></span></div>
+            <div style="padding-bottom: 16px; display: flex; flex-direction: column; gap: 6px;"><div style="display: flex; justify-content: space-between;"><span style="font-size: 13px; font-weight: 500;">Searched papers</span><span class="mono" style="font-size: 12px; color: #96a0ab;">3.4s</span></div><span class="mono" style="font-size: 12px;">4-bit quantization LLM inference</span><div style="display: flex; gap: 4px;"><span class="chip">arxiv.org +8</span></div></div>
+          </div>
+          <div style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px;">
+            <div style="display: flex; justify-content: center;"><svg style="margin-top: 1px; width: 14px; height: 14px; color: #ff9f82;" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M6 6l4 4M10 6l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></div>
+            <div style="padding-bottom: 16px; display: flex; flex-direction: column; gap: 6px;"><div style="display: flex; justify-content: space-between;"><span style="font-size: 13px; font-weight: 500;">Searched the web</span><span class="mono" style="font-size: 12px; color: #ff9f82;">failed · 3 tries</span></div><span class="mono" style="font-size: 12px;">"inference engineer" kernel optimization US</span><span style="font-size: 13px; line-height: 18px; color: #ff9f82;">Web search unavailable — results from GitHub and papers only</span></div>
+          </div>
+        </div>
+        <div role="status" style="margin: 16px; padding: 12px 14px; background: #f8e5df; border-radius: 6px; display: flex; gap: 10px; align-items: flex-start;">
+          <svg viewBox="0 0 16 16" class="si" style="color: #a3361a; margin-top: 3px;" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M5.3 8h5.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span style="color: #a3361a; font-weight: 600;">Web search unavailable</span>
+            <span style="font-size: 13px; line-height: 18px;">Results come from GitHub and papers only. Fewer people can be confirmed by location, so more will stay Lead only. You weren't charged for web search.</span>
+            <div style="display: flex; gap: 8px;"><button type="button" class="btn">Retry web search</button></div>
+          </div>
+        </div>
+        <div class="mrow" style="background: #eceeeb; padding-top: 7px; padding-bottom: 7px;"><span class="cap">Candidate</span><span class="cap">Status</span><span class="cap">Match</span></div>
+        <div class="mrow"><span><b style="font-weight: 500;">Priya Raman</b><br><span style="color: #555d66;">Northwind AI</span></span><span class="badge bv"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="currentColor"></circle><path d="M5.2 8.3l1.9 1.9 3.7-4" fill="none" stroke="#e2f1ea" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>Verified</span><span class="mono">94</span></div>
+        <div class="mrow" style="border-bottom: 0;"><span><b style="font-weight: 500;">Elena Sorokina</b><br><span style="color: #555d66;">Lattice Labs</span></span><span class="badge bv"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="currentColor"></circle><path d="M5.2 8.3l1.9 1.9 3.7-4" fill="none" stroke="#e2f1ea" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>Verified</span><span class="mono">88</span></div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px;">
+      <h2 class="lab">Budget limit reached</h2>
+      <div class="frame">
+        <div style="padding: 14px 16px; border-bottom: 1px solid #dfe2de; background: #f3f4f2;"><span style="font-weight: 600;">Engineers experienced with on-device model deployment on iOS (Core ML)</span><br><span style="font-size: 12px; color: #555d66;">Paused at 1:58 · $1.00</span></div>
+        <div role="status" style="margin: 16px; padding: 16px; background: #faeed8; border-radius: 6px; display: flex; flex-direction: column; gap: 10px;">
+          <span style="font-size: 15px; line-height: 22px; font-weight: 600;">Stopped at your $1.00 limit. 22 people found.</span>
+          <span style="font-size: 13px; line-height: 18px;">13 are verified and 5 are lead only. 4 were still pending and are listed below. About 9 sources were not yet checked.</span>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+            <button type="button" class="btn btn-p">Continue for another $1.00</button>
+            <button type="button" class="btn">Keep these results</button>
+          </div>
+          <span style="font-size: 12px; line-height: 16px; color: #555d66;">Change the per-search limit in Cost report.</span>
+        </div>
+        <div class="mrow" style="background: #eceeeb; padding-top: 7px; padding-bottom: 7px;"><span class="cap">Candidate</span><span class="cap">Status</span><span class="cap">Match</span></div>
+        <div class="mrow"><span><b style="font-weight: 500;">Noah Fairweather</b><br><span style="color: #555d66;">Juniper Mobile</span></span><span class="badge bv"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="currentColor"></circle><path d="M5.2 8.3l1.9 1.9 3.7-4" fill="none" stroke="#e2f1ea" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>Verified</span><span class="mono">90</span></div>
+        <div class="mrow"><span><b style="font-weight: 500;">Isabel Quintero</b><br><span style="color: #555d66;">Pebble Health</span></span><span class="badge bv"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="currentColor"></circle><path d="M5.2 8.3l1.9 1.9 3.7-4" fill="none" stroke="#e2f1ea" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>Verified</span><span class="mono">85</span></div>
+        <div class="mrow" style="border-bottom: 0;"><span><b style="font-weight: 500;">Arjun Mehra</b><br><span style="color: #555d66;">Saltmarsh Labs</span></span><span class="badge bp"><svg class="si" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.6 2.1"></circle></svg>Pending</span><span class="mono" style="color: #555d66;">—</span></div>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
