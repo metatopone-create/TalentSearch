@@ -54,6 +54,22 @@ cd backend && ../.venv/bin/python -m pytest -q
 
 The tests run the full engine and API in demo mode. They don't call Claude, GitHub or OpenAlex.
 
+## Features
+
+- **Search** — one sentence → a plan you edit (Must / Preferred, focus, target) → live trace and results.
+- **Follow-up chat** — once results are in, ask about them ("who are the strongest matches?") or change the search
+  ("expand to Canada"); ambiguous questions get clickable options. The assistant never infers or filters by race,
+  ethnicity, national origin, gender, age or other protected characteristics, and offers job-related alternatives.
+- **Shortlist** — save people from any search, add notes, export.
+- **Profile** — a one-page write-up per person, every sentence cited to evidence, with questions for a first call
+  and an opening line. Written in the interface language.
+- **Contact email** — only an address the person published on their GitHub profile or homepage, shown with its
+  source. No guessing, no purchased data.
+- **Bulk actions** — select rows to save, look up emails, or export just those.
+- **Share** — copy a link to a search (the app has no login yet, so anyone who can reach the server can open it).
+- **English / 中文** interface switch.
+- **Cost report** and **History**.
+
 ## How it works
 
 ```
@@ -107,3 +123,6 @@ Design canvas: https://claude.ai/artifact/FznNsTAAgNPhA78LDv489C
 - Homepage fetching reads plain HTML only; pages that render with JavaScript yield little text.
 - The pre-search estimate is a rough formula; the cost report shows actual spend.
 - Single user, no login (out of scope for this phase).
+- Candidate reasons and summaries are written in English; profiles follow the interface language.
+- Not built: LinkedIn data and paid email lookup (need a licensed data provider), talent radar / monitoring,
+  invites and credits, public API, integrations.

@@ -6,7 +6,12 @@ GET  /api/searches/{id}             full state (P4)
 GET  /api/searches/{id}/events      live updates as server-sent events (P3)
 POST /api/searches/{id}/stop        stop now, keep results
 POST /api/searches/{id}/continue    raise the budget by one more limit and resume
-GET  /api/searches/{id}/export.csv  results as CSV
+GET  /api/searches/{id}/export.csv  results as CSV (?ids=a,b for a selection)
+POST /api/searches/{id}/ask         follow-up chat about the results
+POST /api/searches/{id}/candidates/{cid}/profile   generate a one-page profile
+POST /api/searches/{id}/candidates/{cid}/email     look up a public email
+POST /api/searches/{id}/emails      look up public emails for several people
+GET/POST /api/shortlist, DELETE /api/shortlist/{search}/{cid}, PATCH /api/shortlist/{entry}
 GET  /api/history                   past searches
 GET  /api/cost?month=YYYY-MM        cost report (P6)
 """
@@ -23,16 +28,19 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from . import extras
 from .config import settings
 from .engine import SearchRun, now_iso
 from .llm import Claude, LLMError
-from .models import Plan, SearchState
+from .models import Candidate, ChatMessage, Plan, SearchState
 from .planner import estimate, make_plan
+from .sources import SourceError
 from .store import Store
 
 WEB_DIR = Path(__file__).resolve().parents[2] / "web"
@@ -143,6 +151,7 @@ def get_search(search_id: str) -> dict:
     state = _state(search_id)
     data = state.model_dump()
     data["progress"] = live[search_id].run.progress() if search_id in live else None
+    data["shortlisted"] = store.shortlist_keys(search_id)
     return data
 
 
@@ -204,21 +213,172 @@ async def resume(search_id: str) -> dict:
     return {"ok": True, "budget": entry.run.state.budget}
 
 
-@app.get("/api/searches/{search_id}/export.csv")
-def export(search_id: str) -> Response:
-    state = _state(search_id)
+def _csv(candidates: list[dict], filename: str, extra: list[tuple[str, list[str]]] | None = None) -> Response:
     out = io.StringIO()
     writer = csv.writer(out)
-    writer.writerow(["name", "status", "score", "role", "company", "location", "why", "tags", "github", "homepage",
-                     "scholar", "evidence"])
-    for c in sorted(state.candidates, key=lambda c: -(c.score or 0)):
-        writer.writerow([c.name, c.status, c.score if c.score is not None else "", c.role, c.company, c.location,
-                         c.summary or c.exclusion, "; ".join(c.tags), c.links.get("github", ""),
-                         c.links.get("homepage", ""), c.links.get("scholar", ""),
-                         " ".join(e.url for e in c.evidence)])
-    filename = f"talent-search-{state.id}.csv"
-    return Response(out.getvalue(), media_type="text/csv",
+    extra = extra or []
+    writer.writerow(["name", "status", "score", "role", "company", "location", "why", "tags", "email",
+                     "email_source", "github", "homepage", "scholar", "evidence", *[name for name, _ in extra]])
+    for i, c in enumerate(candidates):
+        links = c.get("links", {})
+        writer.writerow([c["name"], c["status"], c["score"] if c.get("score") is not None else "", c["role"],
+                         c["company"], c["location"], c["summary"] or c["exclusion"], "; ".join(c["tags"]),
+                         c.get("email", ""), c.get("email_source", ""), links.get("github", ""),
+                         links.get("homepage", ""), links.get("scholar", ""),
+                         " ".join(e["url"] for e in c["evidence"]), *[values[i] for _, values in extra]])
+    # BOM so Excel opens UTF-8 (Chinese, accented names) correctly.
+    return Response("﻿" + out.getvalue(), media_type="text/csv; charset=utf-8",
                     headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+
+
+@app.get("/api/searches/{search_id}/export.csv")
+def export(search_id: str, ids: str = "") -> Response:
+    state = _state(search_id)
+    chosen = set(filter(None, ids.split(",")))
+    people = [c for c in state.candidates if not chosen or c.id in chosen]
+    people.sort(key=lambda c: -(c.score or 0))
+    return _csv([c.model_dump() for c in people], f"talent-search-{state.id}.csv")
+
+
+# ---------- work on results: chat, profiles, emails ----------
+
+class AskRequest(BaseModel):
+    message: str
+
+
+def _charge(state: SearchState, dollars: float) -> None:
+    if settings.demo:
+        return
+    state.cost = round(state.cost + dollars, 4)
+    state.cost_by_source["ai"] = round(state.cost_by_source.get("ai", 0.0) + dollars, 4)
+
+
+def _candidate_of(state: SearchState, candidate_id: str) -> Candidate:
+    c = next((c for c in state.candidates if c.id == candidate_id), None)
+    if not c:
+        raise HTTPException(404, "Candidate not found")
+    return c
+
+
+def _changed(state: SearchState, candidate: Candidate | None = None) -> None:
+    """Persist, and tell any open live view about an updated candidate."""
+    store.save(state)
+    if candidate is not None and state.id in live:
+        _publisher(state.id)("candidate", candidate.model_dump())
+
+
+@app.post("/api/searches/{search_id}/ask")
+async def ask_search(search_id: str, body: AskRequest) -> dict:
+    state = _state(search_id)
+    message = body.message.strip()
+    if not message:
+        raise HTTPException(400, "Type a question or a change to the search.")
+    try:
+        reply, cost = await extras.ask(make_claude(), state, message)
+    except LLMError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    state.messages += [ChatMessage(role="user", text=message, at=now_iso()), reply]
+    _charge(state, cost)
+    _changed(state)
+    return reply.model_dump()
+
+
+@app.post("/api/searches/{search_id}/candidates/{candidate_id}/profile")
+async def profile(search_id: str, candidate_id: str, lang: str = "en") -> dict:
+    state = _state(search_id)
+    c = _candidate_of(state, candidate_id)
+    if not c.evidence:
+        raise HTTPException(409, "This person hasn't been checked yet, so there's no evidence to write from.")
+    try:
+        c.profile, cost = await extras.make_profile(make_claude(), state, c, "zh" if lang == "zh" else "en")
+    except LLMError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    _charge(state, cost)
+    _changed(state, c)
+    return c.model_dump()
+
+
+async def _lookup_email(http: httpx.AsyncClient, c: Candidate) -> None:
+    try:
+        c.email, c.email_source = await extras.find_public_email(http, c)
+    except SourceError:
+        c.email, c.email_source = "", ""
+    c.email_checked = True
+
+
+@app.post("/api/searches/{search_id}/candidates/{candidate_id}/email")
+async def email(search_id: str, candidate_id: str) -> dict:
+    state = _state(search_id)
+    c = _candidate_of(state, candidate_id)
+    async with (make_http() or httpx.AsyncClient()) as http:
+        await _lookup_email(http, c)
+    _changed(state, c)
+    return c.model_dump()
+
+
+class IdsRequest(BaseModel):
+    candidate_ids: list[str]
+
+
+@app.post("/api/searches/{search_id}/emails")
+async def emails(search_id: str, body: IdsRequest) -> list[dict]:
+    state = _state(search_id)
+    people = [_candidate_of(state, cid) for cid in body.candidate_ids[:50]]
+    gate = asyncio.Semaphore(4)
+
+    async def one(c: Candidate) -> None:
+        async with gate:
+            await _lookup_email(http, c)
+
+    async with (make_http() or httpx.AsyncClient()) as http:
+        await asyncio.gather(*(one(c) for c in people))
+    for c in people:
+        _changed(state, c)
+    return [c.model_dump() for c in people]
+
+
+# ---------- shortlist (候选名单) ----------
+
+class ShortlistAdd(BaseModel):
+    search_id: str
+    candidate_ids: list[str]
+
+
+class NoteRequest(BaseModel):
+    note: str
+
+
+@app.get("/api/shortlist")
+def shortlist() -> list[dict]:
+    return store.shortlist()
+
+
+@app.post("/api/shortlist")
+def shortlist_add(body: ShortlistAdd) -> dict:
+    state = _state(body.search_id)
+    for cid in body.candidate_ids:
+        store.add_to_shortlist(uuid.uuid4().hex[:12], state.id, _candidate_of(state, cid).model_dump())
+    return {"shortlisted": store.shortlist_keys(state.id)}
+
+
+@app.delete("/api/shortlist/{search_id}/{candidate_id}")
+def shortlist_remove(search_id: str, candidate_id: str) -> dict:
+    store.remove_from_shortlist(search_id, candidate_id)
+    return {"shortlisted": store.shortlist_keys(search_id)}
+
+
+@app.patch("/api/shortlist/{entry_id}")
+def shortlist_note(entry_id: str, body: NoteRequest) -> dict:
+    if not store.update_shortlist_note(entry_id, body.note[:2000]):
+        raise HTTPException(404, "Not on the shortlist")
+    return {"ok": True}
+
+
+@app.get("/api/shortlist/export.csv")
+def shortlist_export() -> Response:
+    entries = store.shortlist()
+    return _csv([e["candidate"] for e in entries], "talent-shortlist.csv",
+                extra=[("note", [e["note"] for e in entries]), ("search", [e["query"] for e in entries])])
 
 
 @app.get("/api/history")

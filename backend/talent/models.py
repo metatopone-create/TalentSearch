@@ -62,6 +62,18 @@ class ConditionCheck(BaseModel):
     refs: list[str]
 
 
+class Profile(BaseModel):
+    """A one-page write-up generated from a candidate's evidence (生成档案)."""
+    headline: str
+    summary: list[ReasonSentence]
+    experience: list[ReasonSentence]
+    strengths: list[str]
+    open_questions: list[str]  # what the evidence doesn't settle; worth asking in a first call
+    outreach: str  # a specific opening line grounded in their work
+    lang: str = "en"
+    generated_at: str = ""
+
+
 class Candidate(BaseModel):
     id: str
     name: str
@@ -78,6 +90,11 @@ class Candidate(BaseModel):
     links: dict[str, str] = Field(default_factory=dict)  # github, homepage, scholar
     evidence: list[Evidence] = Field(default_factory=list)
     exclusion: str = ""  # why not included, for insufficient / no_match
+    # Contact: only an address the person published themselves, with the page it came from.
+    email: str = ""
+    email_source: str = ""
+    email_checked: bool = False
+    profile: Profile | None = None
 
 
 # ---------- Trace (P3 left column) ----------
@@ -101,6 +118,16 @@ class Summary(BaseModel):
     followups: list[str] = Field(default_factory=list)
 
 
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    text: str
+    kind: Literal["answer", "refine", "clarify"] = "answer"
+    highlights: list[str] = Field(default_factory=list)  # candidate ids the answer is about
+    options: list[str] = Field(default_factory=list)  # clickable replies for a clarifying question
+    new_query: str = ""  # for "refine": a full request to plan as a new search
+    at: str = ""
+
+
 class SearchState(BaseModel):
     id: str
     plan: Plan
@@ -114,4 +141,5 @@ class SearchState(BaseModel):
     trace: list[TraceStep] = Field(default_factory=list)
     candidates: list[Candidate] = Field(default_factory=list)
     summary: Summary | None = None
+    messages: list[ChatMessage] = Field(default_factory=list)
     error: str = ""

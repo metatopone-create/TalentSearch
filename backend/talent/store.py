@@ -21,6 +21,15 @@ create table if not exists searches (
   seconds real,
   state text not null
 );
+create table if not exists shortlist (
+  id text primary key,
+  search_id text not null,
+  candidate_id text not null,
+  added_at text not null,
+  note text not null default '',
+  candidate text not null,
+  unique (search_id, candidate_id)
+);
 create table if not exists extra_costs (
   at text not null,
   source text not null,
@@ -57,6 +66,37 @@ class Store:
             "select id, created_at, query, status, cost, people, verified, seconds from searches "
             "order by created_at desc limit ?", (limit,)).fetchall()
         return [dict(r) for r in rows]
+
+    # ----- shortlist (候选名单) -----
+
+    def shortlist(self) -> list[dict]:
+        rows = self.db.execute(
+            "select s.id, s.search_id, s.candidate_id, s.added_at, s.note, s.candidate, q.query "
+            "from shortlist s left join searches q on q.id = s.search_id order by s.added_at desc").fetchall()
+        return [{"id": r["id"], "search_id": r["search_id"], "candidate_id": r["candidate_id"],
+                 "added_at": r["added_at"], "note": r["note"], "query": r["query"] or "",
+                 "candidate": json.loads(r["candidate"])} for r in rows]
+
+    def shortlist_keys(self, search_id: str) -> list[str]:
+        rows = self.db.execute("select candidate_id from shortlist where search_id = ?", (search_id,)).fetchall()
+        return [r["candidate_id"] for r in rows]
+
+    def add_to_shortlist(self, entry_id: str, search_id: str, candidate: dict, note: str = "") -> None:
+        self.db.execute(
+            "insert into shortlist (id, search_id, candidate_id, added_at, note, candidate) values (?,?,?,?,?,?) "
+            "on conflict (search_id, candidate_id) do update set candidate = excluded.candidate",
+            (entry_id, search_id, candidate["id"], datetime.now(timezone.utc).isoformat(timespec="seconds"), note,
+             json.dumps(candidate)))
+        self.db.commit()
+
+    def update_shortlist_note(self, entry_id: str, note: str) -> bool:
+        cur = self.db.execute("update shortlist set note = ? where id = ?", (note, entry_id))
+        self.db.commit()
+        return cur.rowcount > 0
+
+    def remove_from_shortlist(self, search_id: str, candidate_id: str) -> None:
+        self.db.execute("delete from shortlist where search_id = ? and candidate_id = ?", (search_id, candidate_id))
+        self.db.commit()
 
     def add_cost(self, source: str, dollars: float) -> None:
         self.db.execute("insert into extra_costs values (?,?,?)",

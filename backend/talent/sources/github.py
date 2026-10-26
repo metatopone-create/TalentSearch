@@ -12,7 +12,7 @@ from . import Lead, RawEvidence, SourceError
 API = "https://api.github.com"
 
 
-def _headers() -> dict[str, str]:
+def api_headers() -> dict[str, str]:
     headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
     if settings.github_token:
         headers["Authorization"] = f"Bearer {settings.github_token}"
@@ -26,7 +26,7 @@ class GitHub:
 
     async def _get(self, path: str, params: dict | None = None) -> object:
         try:
-            response = await self.http.get(API + path, params=params, headers=_headers(), timeout=20)
+            response = await self.http.get(API + path, params=params, headers=api_headers(), timeout=20)
         except httpx.HTTPError as exc:
             raise SourceError(f"GitHub unreachable: {exc}") from exc
         if response.status_code == 403 and response.headers.get("x-ratelimit-remaining") == "0":

@@ -16,6 +16,7 @@ from typing import Any
 import httpx
 
 from .engine import QUERY_SYSTEM, SUMMARY_SYSTEM, VERIFY_SYSTEM
+from .extras import ASK_SYSTEM, PROFILE_SYSTEM
 from .llm import CallResult, LLMError
 from .planner import PLAN_SYSTEM
 from .sources.web import WEB_SYSTEM
@@ -28,6 +29,7 @@ PEOPLE: list[dict[str, Any]] = [
          verdict=("verified", 94, "Senior ML Engineer", "Maintains a popular inference kernel library; 2 papers on 4-bit quantization; US-based.",
                   ["CUDA", "Quantization", "vLLM", "Serving"])),
     dict(login="mfeld", name="Marcus Feld", company="Halcyon Cloud", location="San Francisco, CA", blog="",
+         email="marcus@halcyon.example",
          bio="Inference @ Halcyon. Batching schedulers.",
          repos=[("batchwise", 610, "Python", "Continuous batching simulator")],
          verdict=("verified", 91, "Staff Engineer, Inference", "Core contributor to an open-source serving engine (140 merged PRs); talk on continuous batching.",
@@ -92,7 +94,8 @@ PAPERS = [
 ]
 
 HOMEPAGES = {
-    "priyaraman.dev": ("Priya Raman — about", "Senior ML engineer at Northwind AI in Seattle. Kernels, quantization, serving."),
+    "priyaraman.dev": ("Priya Raman — about", "Senior ML engineer at Northwind AI in Seattle. Kernels, quantization, serving. "
+                       '<a href="mailto:priya@priyaraman.dev">priya@priyaraman.dev</a>'),
     "esorokina.github.io": ("Elena Sorokina", "Research scientist at Lattice Labs, Boston. Efficient inference, KV caches."),
     "hkobayashi.net": ("Hana Kobayashi", "PhD candidate at Eastbrook University, Pittsburgh. Graduating 2027."),
     "tomasrivera.blog": ("Notes on GPU kernel tuning", "Tomás writes about Triton and CUDA tuning. Engineer at Quillstack, NYC."),
@@ -125,6 +128,7 @@ def _user_json(p: dict) -> dict:
     return {"login": p["login"], "type": "User", "name": p["name"], "company": p["company"] or None,
             "location": p["location"] or None, "blog": p["blog"], "bio": p["bio"] or None,
             "html_url": f"https://github.com/{p['login']}", "followers": 40 + len(p["name"]) * 9,
+            "email": p.get("email"),
             "public_repos": 12}
 
 
@@ -236,6 +240,12 @@ class DemoClaude:
                 "followups": ["Find more quantization specialists", "Expand to Canada",
                               "Only show people active in the last 6 months"],
             })
+        if system == ASK_SYSTEM:
+            await self._wait(0.6, 1.0)
+            return CallResult(data=_demo_ask(user), cost=0.004)
+        if system.startswith(PROFILE_SYSTEM.split("{")[0]):
+            await self._wait(1.0, 1.6)
+            return CallResult(data=_demo_profile(user, "Chinese" in system), cost=0.012)
         raise LLMError("Demo mode has no answer for this prompt")
 
     async def web_search(self, system: str, user: str, max_uses: int = 3, effort: str = "low") -> CallResult:
@@ -306,3 +316,70 @@ def _paper_title(prompt: str, eid: str) -> str:
     m = re.search(rf"^\[{eid}\] \(paper\) (.+?) — ", prompt, re.M)
     return m.group(1) if m else "a relevant paper"
 
+
+
+def _demo_ask(prompt: str) -> dict:
+    message = prompt.rsplit("Recruiter: ", 1)[-1].strip()
+    zh = bool(re.search(r"[\u4e00-\u9fff]", message))
+    rows = re.findall(r"^\[(\w+)\] ([^|]+) \| (\w+) \| score (\w+)", prompt, re.M)
+    verified = [(cid, name.strip(), int(score)) for cid, name, status, score in rows if status == "verified"]
+    verified.sort(key=lambda r: -r[2])
+    blank = {"highlights": [], "options": [], "new_query": ""}
+    if re.search(r"华人|华裔|中国人|chinese|asian|race|ethnic|种族|民族|国籍|女性|男性|年龄|gender|\bage\b", message, re.I):
+        return {**blank, "kind": "clarify",
+                "text": ("我不能按种族、民族或国籍来判断或筛选候选人——这不是公平、合法的招聘依据，凭姓名猜测也不可靠。"
+                         "如果和岗位相关，我可以按这些条件帮你看：" if zh else
+                         "I can't infer or filter people by race, ethnicity or national origin — it isn't a fair or "
+                         "lawful basis for hiring, and guessing from names is unreliable. If it matters for the role, "
+                         "I can look at:"),
+                "options": (["资料里写明会说中文", "在某个城市", "资料里写明有美国工作许可", "其他（自己输入）"] if zh else
+                            ["States they speak Mandarin", "Based in a specific city", "States US work authorization",
+                             "Something else (type it)"])}
+    if re.search(r"canada|加拿大|more|更多|expand|扩大|另外|other companies|startup|初创", message, re.I):
+        base = re.search(r"^Request: (.+)$", prompt, re.M).group(1)
+        change = "including Canada" if re.search(r"canada|加拿大", message, re.I) else "with more candidates in the same area"
+        return {**blank, "kind": "refine", "new_query": f"{base}, {change}",
+                "text": ("好的，我会按新条件重新规划一次搜索：" if zh else "I'll plan a new search for: ")
+                        + f"{base}, {change}"}
+    if re.search(r"^(他们|她们|they|them)\b|他们|那家|that company", message, re.I) and not verified:
+        return {**blank, "kind": "clarify",
+                "text": "您说的“他们”具体指哪些人？" if zh else "Who do you mean by “they”?",
+                "options": ["已核验的候选人", "某家公司的人", "其他（自己输入）"] if zh else
+                           ["The verified candidates", "People at one company", "Something else (type it)"]}
+    top = verified[:3]
+    names = ", ".join(n for _, n, _ in top)
+    return {**blank, "kind": "answer", "highlights": [c for c, _, _ in top],
+            "text": (f"共有 {len(verified)} 位已核验。匹配度最高的是 {names}。" if zh else
+                     f"{len(verified)} people are verified. The strongest matches are {names}.")}
+
+
+def _demo_profile(prompt: str, zh: bool) -> dict:
+    head = re.search(r"^Person: (.+?) \((.*)\)$", prompt, re.M)
+    name, detail = head.group(1), head.group(2)
+    ev = re.findall(r"^\[(e\d+)\] \((\w+)\) (.+?) — ", prompt, re.M)
+    by_kind = {}
+    for eid, kind, title in ev:
+        by_kind.setdefault(kind, []).append((eid, title))
+    code = by_kind.get("code", [])
+    papers = by_kind.get("paper", [])
+    web = by_kind.get("web", [])
+    exp = []
+    for eid, title in code[1:3]:
+        exp.append({"text": (f"维护或贡献了 {title}。" if zh else f"Maintains or contributes to {title}."), "refs": [eid]})
+    for eid, title in papers[:2]:
+        exp.append({"text": (f"论文作者：《{title}》。" if zh else f"Author of “{title}”."), "refs": [eid]})
+    for eid, title in web[:1]:
+        exp.append({"text": (f"个人或公司页面「{title}」确认了当前职位。" if zh else f"“{title}” confirms the current role."), "refs": [eid]})
+    first = [e for e, _, _ in ev[:2]]
+    return {
+        "headline": detail.replace(", ", " · ").strip(" ·"),
+        "summary": [{"text": (f"{name} 的公开工作集中在大模型推理和服务方向。" if zh else
+                              f"{name}'s public work centers on LLM inference and serving."), "refs": first}],
+        "experience": exp or [{"text": "公开资料较少。" if zh else "Little public material.", "refs": first[:1]}],
+        "strengths": (["推理性能优化", "开源贡献", "有论文支撑"] if zh else
+                      ["Inference performance", "Open-source track record", "Published work"])[: 2 + bool(papers)],
+        "open_questions": (["目前的职级和团队规模？", "是否考虑新机会、时间点？", "是否愿意搬迁或远程？"] if zh else
+                           ["Current level and team size?", "Open to a move, and when?", "Relocation or remote?"]),
+        "outreach": (f"看到你在 {code[1][1] if len(code) > 1 else '推理'} 上的工作，想和你聊聊一个相关的机会。" if zh else
+                     f"Your work on {code[1][1] if len(code) > 1 else 'inference'} caught my eye — I'd love to tell you about a related role."),
+    }
