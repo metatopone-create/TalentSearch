@@ -13,7 +13,7 @@
   --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --paper: #0f1214; --surface: #171b1e; --sunken: #1f2428; --ink: #e6e9ec; --muted: #9ba4ad; --line: #2a3036;
     --control: #6c757e; --cobalt: #93a8ff; --cobalt-hover: #b3c2ff; --cobalt-soft: #1c2442; --on-cobalt: #0b1230;
     --trace: #0a0c0f; --trace-line: #252b32; --trace-muted: #8a949f;
@@ -21,7 +21,18 @@
     --pending: #9ba4ad; --pending-soft: #232a2f; --insufficient: #f28d6e; --insufficient-soft: #331b15;
     --score-1: #5566a8; --score-2: #6478c6; --score-3: #7c91ec; --score-4: #9aaeff; --score-5: #c7d2ff;
     --shadow-drawer: -16px 0 40px rgba(0, 0, 0, 0.55);
+    color-scheme: dark;
   }
+}
+:root[data-theme="dark"] {
+    --paper: #0f1214; --surface: #171b1e; --sunken: #1f2428; --ink: #e6e9ec; --muted: #9ba4ad; --line: #2a3036;
+    --control: #6c757e; --cobalt: #93a8ff; --cobalt-hover: #b3c2ff; --cobalt-soft: #1c2442; --on-cobalt: #0b1230;
+    --trace: #0a0c0f; --trace-line: #252b32; --trace-muted: #8a949f;
+    --verified: #5ccb9d; --verified-soft: #13291f; --lead: #e8b660; --lead-soft: #2e2412;
+    --pending: #9ba4ad; --pending-soft: #232a2f; --insufficient: #f28d6e; --insufficient-soft: #331b15;
+    --score-1: #5566a8; --score-2: #6478c6; --score-3: #7c91ec; --score-4: #9aaeff; --score-5: #c7d2ff;
+    --shadow-drawer: -16px 0 40px rgba(0, 0, 0, 0.55);
+    color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -220,3 +231,21 @@ h1, h2, h3, p { margin: 0; }
 .sl.head { background: var(--sunken); padding-top: 8px; padding-bottom: 8px; font-size: 12px; font-weight: 500; color: var(--muted); }
 .sl textarea { width: 100%; resize: vertical; min-height: 34px; border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px; font-size: 13px; background: var(--surface); }
 .sl textarea:focus { border-color: var(--control); }
+
+/* Narrow screens: nav becomes a top bar, columns stack. Desktop is the primary layout. */
+@media (max-width: 760px) {
+  .shell { flex-direction: column; }
+  .nav { position: static; height: auto; flex: none; flex-direction: row; flex-wrap: wrap; align-items: center; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px 12px; }
+  .brand { padding: 4px 8px; width: 100%; }
+  .nav-foot { margin-top: 0; border-top: 0; flex-direction: row; flex-wrap: wrap; gap: 4px 10px; align-items: center; padding: 6px 8px 0; width: 100%; }
+  .lang { margin-bottom: 0; }
+  .home { padding: 40px 16px; }
+  .page, .page-head, .plan-form, .plan-side, .sticky-foot { padding-left: 16px; padding-right: 16px; }
+  .plan-side { border-left: 0; border-top: 1px solid var(--line); max-width: none; }
+  .search { flex-direction: column; height: auto; }
+  .trace, .summary-col { flex: none; max-height: 60vh; border-right: 0; }
+  .results { min-height: 70vh; }
+  .metrics { grid-template-columns: 1fr; }
+  .metrics > div { border-right: 0; border-bottom: 1px solid var(--line); }
+  .drawer { width: 100%; }
+}

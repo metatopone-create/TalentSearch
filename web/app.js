@@ -16,6 +16,7 @@ const FINAL = ["done", "stopped", "budget", "failed"];
 const ZH = {
   "Search": "搜索", "Shortlist": "候选名单", "History": "历史记录", "Cost report": "成本报表",
   "Spent this month": "本月已花费", "Demo data · no API calls": "演示数据 · 不调用接口",
+  "Every search replays one recorded sample run with fictional people.": "每次搜索都会回放同一组录制好的示例结果，人物均为虚构。",
   "{n} searches": "{n} 次搜索", "{n} search": "{n} 次搜索",
   "Who are you looking for?": "你想找什么样的人？",
   "Describe who you're looking for — role, skills, location, experience": "描述你要找的人——职位、技能、地点、经验",
